@@ -1,0 +1,14 @@
+from django.db import models
+from django.conf import settings
+
+class Report(models.Model):
+    EXPORT_TYPE_CHOICES = [("excel","Excel"), ("pdf","PDF")]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports")
+    name = models.CharField(max_length=255)
+    filters = models.JSONField(blank=True, null=True)
+    export_type = models.CharField(max_length=10, choices=EXPORT_TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name

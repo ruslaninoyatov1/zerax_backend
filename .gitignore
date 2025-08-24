@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.dist-info/
+.eggs/
+
+# Django / Environment
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+local_settings.py
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# PyCharm / VSCode
+.idea/
+.vscode/
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Media / Static (optional - if built dynamically)
+media/
+staticfiles/
+static/
+
+# Pipenv / Poetry
+Pipfile.lock
+poetry.lock
+
+# dotenv files
+.env
+.env.*
+
+# Coverage / testing
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Build artifacts
+build/
+dist/
+*.manifest
+*.spec
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Docker (if used)
+*.pid
+*.pid.lock
