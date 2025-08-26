@@ -166,19 +166,7 @@ SIMPLE_JWT = {
 
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Zerax Finance API",
-    "DESCRIPTION": "API for Zerax multi-tenant finance system",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-    "COMPONENT_SPLIT_REQUEST": True,
-    "SECURITY": [{"BearerAuth": []}],
-    "AUTHENTICATION_WHITELIST": [],    
-}
-
-
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your API',
+    'TITLE': 'Zarex API',
     'DESCRIPTION': 'API documentation',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,

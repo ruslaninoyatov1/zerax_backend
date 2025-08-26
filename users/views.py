@@ -1,12 +1,46 @@
-from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, MeSerializer
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status, generics, permissions
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Localized messages
+        messages = {
+            "UZ": "Siz ro'yhatdan o'tdingiz",
+            "RU": "Вы зарегистрированы",
+            "EN": "You have registered successfully",
+        }
+        success_message = messages.get(user.language, "You have registered successfully")
+
+        # Generate JWT tokens for the new user
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "message": success_message,
+            "user": {
+                "id": user.id,
+                "full_name": user.full_name,
+                "email": user.email,
+                "role": user.role,
+                "language": user.language,
+                "theme": user.theme,
+            },
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
 
 
 class LoginView(TokenObtainPairView):
@@ -18,12 +52,9 @@ class RefreshView(TokenRefreshView):
     permission_classes = [permissions.AllowAny]
 
 
-class MeView(APIView):
-    def get(self, request):
-        return Response(MeSerializer(request.user).data)
+class MeView(RetrieveUpdateAPIView):
+    serializer_class = MeSerializer
+    permission_classes = [IsAuthenticated]
 
-    def put(self, request):
-        ser = MeSerializer(request.user, data=request.data, partial=True)
-        ser.is_valid(raise_exception=True)
-        ser.save()
-        return Response(ser.data)
+    def get_object(self):
+        return self.request.user

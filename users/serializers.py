@@ -20,22 +20,27 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Extend JWT payload (add anything you want, e.g. role, language, tenant_id later)
-    """
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token["role"] = user.role
         token["language"] = user.language
         token["theme"] = user.theme
-        # token["tenant_id"] = str(user.tenant_id)  # tenant qo'shilsa
         return token
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        # also return user info with the token
+
+        # Choose success message based on user language
+        messages = {
+            "UZ": "Hush kelibsiz",
+            "RU": "Добро пожаловать",
+            "EN": "Welcome",
+        }
+        success_message = messages.get(self.user.language, "Welcome")
+
         data.update({
+            "message": success_message,  # add localized message
             "user": {
                 "id": self.user.id,
                 "email": self.user.email,
@@ -46,6 +51,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             }
         })
         return data
+
 
 
 class MeSerializer(serializers.ModelSerializer):
