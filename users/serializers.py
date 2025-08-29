@@ -10,14 +10,16 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "full_name", "email", "password", "role", "language", "theme")
+        read_only_fields = ("role",)
 
     def create(self, validated_data):
         password = validated_data.pop("password")
+        # force role to 'user'
+        validated_data['role'] = 'user'
         user = User.objects.create(**validated_data)
         user.set_password(password)
         user.save()
         return user
-
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -31,7 +33,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 
-        # Choose success message based on user language
         messages = {
             "UZ": "Hush kelibsiz",
             "RU": "Добро пожаловать",
@@ -40,7 +41,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         success_message = messages.get(self.user.language, "Welcome")
 
         data.update({
-            "message": success_message,  # add localized message
+            "message": success_message,  
             "user": {
                 "id": self.user.id,
                 "email": self.user.email,
@@ -58,4 +59,4 @@ class MeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "full_name", "email", "role", "language", "theme")
-        read_only_fields = ("email", "role")   # adjust as needed
+        read_only_fields = ("email", "role")

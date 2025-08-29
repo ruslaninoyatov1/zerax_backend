@@ -25,7 +25,6 @@ class RegisterView(generics.CreateAPIView):
         }
         success_message = messages.get(user.language, "You have registered successfully")
 
-        # Generate JWT tokens for the new user
         refresh = RefreshToken.for_user(user)
 
         return Response({
