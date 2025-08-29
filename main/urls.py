@@ -20,16 +20,19 @@ schema_view = get_schema_view(
 )
 
 
-
 urlpatterns = [
-    path("admin/", admin.site.urls),
 
-    path("api/auth/register/",     include("users.urls_register")),
-    path("api/auth/",              include("users.urls_auth")),     
-    path("api/users/",             include("users.urls_me")),       
+   path("admin/", admin.site.urls),
+   path("api/invoices/",         include("invoices.urls")),
+   path("api/auth/register/",     include("users.urls_register")),
+   path("api/auth/",              include("users.urls_auth")),     
+   path("api/users/",             include("users.urls_me")),       
 
 
 
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
+   path("api/accounting/", include("accounting.urls")),
+   path("api/expenses/", include("expenses.urls")),
+
+   path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+   path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]
