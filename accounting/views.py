@@ -5,12 +5,12 @@ from django.db.models import Sum, F
 from .models import Account, JournalEntry
 from .serializers import AccountSerializer, JournalEntrySerializer
 from .message import get_message
-
+from costum_permissions.permission import *
 
 # ---- Account Views ----
 class AccountListCreateView(generics.ListCreateAPIView):
     serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAdminOrAccountant]
+    permission_classes = [IsAdminOrAccountant]
 
     def get_queryset(self):
         return Account.objects.all()
@@ -24,12 +24,10 @@ class AccountListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
-
 # ---- Journal Entry Views ----
 class JournalEntryListCreateView(generics.ListCreateAPIView):
     serializer_class = JournalEntrySerializer
-    permission_classes = [permissions.IsAdminOrAccountant]
+    permission_classes = [IsAdminOrAccountant]
 
     def get_queryset(self):
         return JournalEntry.objects.all()
@@ -43,10 +41,9 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
 # ---- Balance Sheet View ----
 class BalanceSheetView(APIView):
-    permission_classes = [permissions.IsAdminOrAccountant]
+    permission_classes = [IsAdminOrAccountant]
 
     def get(self, request):
         # Group balances by account type

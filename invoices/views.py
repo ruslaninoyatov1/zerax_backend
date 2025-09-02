@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from .models import Invoice
 from .serializers import InvoiceSerializer
 from .message import get_message
-
+from costum_permissions.permission import *
 
 class InvoiceListCreateView(generics.ListCreateAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [permissions.IsAdminOrAccountant]
+    permission_classes = [IsAdminOrAccountant | AuthenticatedReadOnly]
 
     def get_queryset(self):
         return Invoice.objects.filter(user=self.request.user)
@@ -28,7 +28,7 @@ class InvoiceListCreateView(generics.ListCreateAPIView):
 
 class InvoiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [permissions.IsAdminOrAccountant]
+    permission_classes = [IsAdminOrAccountant]
 
     def get_queryset(self):
         return Invoice.objects.filter(user=self.request.user)

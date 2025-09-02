@@ -7,6 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, generics, permissions
+from costum_permissions.permission import *
+from django.contrib.auth import get_user_model
+
+
+
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
@@ -57,3 +62,23 @@ class MeView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+
+
+
+
+User = get_user_model()
+
+
+# List all users / Create user
+class UserListCreateView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [IsAdmin | AccountantReadOnly]
+
+
+# Retrieve / Update / Delete user
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = MeSerializer
+    permission_classes = [IsAdmin]

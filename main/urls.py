@@ -29,7 +29,8 @@ urlpatterns = [
    path("api/invoices/",         include("invoices.urls")),
    path("api/auth/register/",     include("users.urls_register")),
    path("api/auth/",              include("users.urls_auth")),     
-   path("api/users/",             include("users.urls_me")),       
+   path("api/users/",             include("users.urls_me")),    
+   path("api/", include("users.url_admin")),  # admin uchun
 
 
 

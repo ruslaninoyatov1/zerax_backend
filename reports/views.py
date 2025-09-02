@@ -6,11 +6,11 @@ from .models import Report
 from .serializers import ReportSerializer
 from .message import get_message
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from costum_permissions.permission import *
 # ---- List & Create Reports ----
 class ReportListCreateView(generics.ListCreateAPIView):
     serializer_class = ReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AdminReadOnly | AccountantReadOnly]
     parser_classes = [MultiPartParser, FormParser]  
     def get_queryset(self):
         return Report.objects.filter(user=self.request.user)
