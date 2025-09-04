@@ -11,7 +11,7 @@ class IsAdminOrAccountant(BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
 
-        # Only admin can DELETE
+        
         if request.method == "DELETE":
             return request.user.groups.filter(name="Admin").exists()
 
