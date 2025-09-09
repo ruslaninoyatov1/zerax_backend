@@ -1,8 +1,13 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
+from company.models import Company
+from company.menagers import CompanyManager, CompanyQuerySet
 
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
+    def get_queryset(self):
+        return CompanyQuerySet(self.model, using=self._db)
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email")
@@ -19,6 +24,8 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="users")
+
     ROLE_CHOICES = [
         ("admin", "Admin"),
         ("accountant", "Accountant"),
@@ -40,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["full_name"]
 
-    objects = UserManager()
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email

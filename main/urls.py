@@ -21,6 +21,15 @@ schema_view = get_schema_view(
 )
 
 
+company_header = openapi.Parameter(
+    "X-Company-ID",
+    openapi.IN_HEADER,
+    description="Company ID for multi-tenancy",
+    type=openapi.TYPE_STRING,
+    required=False,
+)
+
+
 urlpatterns = [
    path("api/", include("settings.urls")),
    path("admin/", admin.site.urls),

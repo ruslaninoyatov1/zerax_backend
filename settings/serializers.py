@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("language", "theme")  # editable fields only
+        fields = ("language", "theme")  
 
 
 class IntegrationSerializer(serializers.ModelSerializer):

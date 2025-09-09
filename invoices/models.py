@@ -1,7 +1,13 @@
 from django.db import models
 from django.conf import settings
+from company.menagers import CompanyManager
+from company.models import Company
+
+
 
 class Invoice(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="invoices")
+
     STATUS_CHOICES = [
         ("paid", "Paid"),
         ("unpaid", "Unpaid"),
@@ -14,6 +20,6 @@ class Invoice(models.Model):
     due_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    objects = CompanyManager() 
     def __str__(self):
         return f"Invoice {self.id} - {self.client_name}"

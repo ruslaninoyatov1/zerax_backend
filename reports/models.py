@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
+from company.menagers import CompanyManager
+from company.models import Company
 
 class Report(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="reports")
+
     EXPORT_TYPE_CHOICES = [
         ("excel", "Excel"),
         ("pdf", "PDF"),
@@ -23,6 +27,6 @@ class Report(models.Model):
         blank=True,
         null=True
     )
-
+    objects = CompanyManager() 
     def __str__(self):
         return self.name

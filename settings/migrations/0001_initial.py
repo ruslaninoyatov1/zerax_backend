@@ -16,16 +16,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Report',
+            name='Integration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('filters', models.JSONField(blank=True, null=True)),
-                ('export_type', models.CharField(choices=[('excel', 'Excel'), ('pdf', 'PDF')], max_length=10)),
+                ('provider', models.CharField(choices=[('click', 'Click'), ('payme', 'Payme')], max_length=50)),
+                ('api_key', models.CharField(max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('file', models.FileField(blank=True, null=True, upload_to='reports/')),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='company.company')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to=settings.AUTH_USER_MODEL)),
+                ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='integrations', to='company.company')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='integrations', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
