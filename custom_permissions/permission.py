@@ -1,4 +1,4 @@
-# costum_permissions/permission.py
+# custom_permissions/permission.py
 from rest_framework.permissions import BasePermission
 
 class IsAdminOrAccountant(BasePermission):

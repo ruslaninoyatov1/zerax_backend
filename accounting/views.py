@@ -5,7 +5,7 @@ from django.db.models import Sum, F
 from .models import Account, JournalEntry
 from .serializers import AccountSerializer, JournalEntrySerializer
 from .message import get_message
-from costum_permissions.permission import *
+from custom_permissions.permission import *
 
 # ---- Account Views ----
 class AccountListCreateView(generics.ListCreateAPIView):

@@ -3,13 +3,16 @@ from rest_framework.response import Response
 from .models import Invoice
 from .serializers import InvoiceSerializer
 from .message import get_message
-from costum_permissions.permission import *
+from custom_permissions.permission import *
 
 class InvoiceListCreateView(generics.ListCreateAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [IsAdminOrAccountant | AuthenticatedReadOnly]
+    # permission_classes = [IsAdminOrAccountant | AuthenticatedReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Invoice.objects.none()
         return Invoice.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -28,9 +31,12 @@ class InvoiceListCreateView(generics.ListCreateAPIView):
 
 class InvoiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = InvoiceSerializer
-    permission_classes = [IsAdminOrAccountant]
+    # permission_classes = [IsAdminOrAccountant]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Invoice.objects.none()
         return Invoice.objects.filter(user=self.request.user)
 
     def update(self, request, *args, **kwargs):

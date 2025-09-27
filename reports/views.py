@@ -6,13 +6,16 @@ from .models import Report
 from .serializers import ReportSerializer
 from .message import get_message
 from rest_framework.parsers import MultiPartParser, FormParser
-from costum_permissions.permission import *
+from custom_permissions.permission import *
 # ---- List & Create Reports ----
 class ReportListCreateView(generics.ListCreateAPIView):
     serializer_class = ReportSerializer
-    permission_classes = [AdminReadOnly | AccountantReadOnly]
+    # permission_classes = [AdminReadOnly | AccountantReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]  
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Report.objects.none()
         return Report.objects.filter(user=self.request.user)
 
     @swagger_auto_schema(
