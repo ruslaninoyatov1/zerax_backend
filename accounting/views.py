@@ -1,11 +1,11 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from django.db.models import Sum, F
 from .models import Account, JournalEntry
 from .serializers import AccountSerializer, JournalEntrySerializer
 from .message import get_message
-from custom_permissions.permission import *
+from custom_permissions.permission import IsAdminOrAccountant
+
 
 # ---- Account Views ----
 class AccountListCreateView(generics.ListCreateAPIView):
@@ -24,6 +24,7 @@ class AccountListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
+
 # ---- Journal Entry Views ----
 class JournalEntryListCreateView(generics.ListCreateAPIView):
     serializer_class = JournalEntrySerializer
@@ -41,12 +42,13 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-# ---- Balance Sheet View ----
-class BalanceSheetView(APIView):
+
+# ----  Balance Sheet View  ----
+class BalanceSheetView(generics.GenericAPIView):
+    serializer_class = JournalEntrySerializer
     permission_classes = [IsAdminOrAccountant]
 
     def get(self, request):
-        # Group balances by account type
         accounts = Account.objects.all()
         result = {}
 
