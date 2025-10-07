@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 class Invoice(models.Model):
     STATUS_CHOICES = [
@@ -17,3 +18,6 @@ class Invoice(models.Model):
 
     def __str__(self):
         return f"Invoice {self.id} - {self.client_name}"
+
+    def is_due(self):
+        return self.status == "pending" and self.due_date <= timezone.now().date

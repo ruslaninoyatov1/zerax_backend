@@ -14,6 +14,8 @@ from datetime import timedelta
 
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -189,5 +191,20 @@ SPECTACULAR_SETTINGS = {
                 'bearerFormat': 'JWT',
             }
         }
+    },
+}
+# Redis va Celery konfiguratsiyasi
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+
+
+CELERY_BEAT_SCHEDULE = {
+    "send-invoice-reminders-every-2-min": {
+        "task": "invoices.tasks.send_due_invoice_reminders",
+        "schedule": crontab(minute="*/2"),  # har 2 daqiqada
     },
 }
