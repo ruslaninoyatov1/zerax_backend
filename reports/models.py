@@ -7,6 +7,11 @@ class Report(models.Model):
         ("pdf", "PDF"),
     ]
 
+    SOURCE_CHOICES = [
+        ('invoices','Invoices'),
+        ('expenses','Expenses'),
+        ('accounting','Accounting')
+    ]
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -14,8 +19,10 @@ class Report(models.Model):
     )
     name = models.CharField(max_length=255)
     filters = models.JSONField(blank=True, null=True)
+    source = models.CharField(max_length=20,choices=SOURCE_CHOICES,default='invoices')
     export_type = models.CharField(max_length=10, choices=EXPORT_TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 
     file = models.FileField(
