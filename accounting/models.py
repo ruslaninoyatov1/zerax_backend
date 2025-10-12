@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 class Account(models.Model):
@@ -24,4 +25,10 @@ class JournalEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Journal {self.id} - {self.account.name}"
+        return f"Journal: {self.account.name} ({self.date})"
+
+    def clean(self):
+        if self.debit <= 0 and self.credit <= 0:
+            raise ValidationError("Debit yoki Credit qiymatlaridan biri musbat bo‘lishi kerak.")
+        if self.debit > 0 and self.credit > 0:
+            raise ValidationError("Bir vaqtning o‘zida Debit va Credit kiritilmasligi kerak.")

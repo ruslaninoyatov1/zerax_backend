@@ -1,19 +1,41 @@
-from rest_framework import generics, permissions, status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from .models import Invoice
 from .serializers import InvoiceSerializer
 from .message import get_message
 from custom_permissions.permission import *
+from rest_framework.pagination import PageNumberPagination
 
+# New
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+# New version
 class InvoiceListCreateView(generics.ListCreateAPIView):
+
     serializer_class = InvoiceSerializer
-    # permission_classes = [IsAdminOrAccountant | AuthenticatedReadOnly]
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Invoice.objects.all()
+    permission_classes = [IsAdminOrAccountant]
+    pagination_class = StandardResultsSetPagination
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'client_name']
+    search_fields = ['client_name']
+    ordering_fields = ['amount', 'due_date', 'created_at']
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
+        user = self.request.user
+        if not user.is_authenticated:
             return Invoice.objects.none()
-        return Invoice.objects.filter(user=self.request.user)
+        if user.role in ['admin', 'accountant']:
+            return Invoice.objects.all()
+        return Invoice.objects.filter(user=user)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, context={"request": request})
@@ -35,9 +57,13 @@ class InvoiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
+        user = self.request.user
+        if not user.is_authenticated:
             return Invoice.objects.none()
-        return Invoice.objects.filter(user=self.request.user)
+        if user.role in ["admin", "accountant"]:
+            return Invoice.objects.all()
+        return Invoice.objects.filter(user=user)
+        
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
@@ -62,3 +88,8 @@ class InvoiceDetailView(generics.RetrieveUpdateDestroyAPIView):
             {"message": get_message("invoice_deleted", request.user)},
             status=status.HTTP_200_OK,
         )
+# New
+class InvoiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+    permission_classes = [IsOwnerOrAdmin]

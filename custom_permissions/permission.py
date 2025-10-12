@@ -1,4 +1,5 @@
 # custom_permissions/permission.py
+from rest_framework import permissions
 from rest_framework.permissions import BasePermission
 
 class IsAdminOrAccountant(BasePermission):
@@ -13,12 +14,9 @@ class IsAdminOrAccountant(BasePermission):
 
         # Only admin can DELETE
         if request.method == "DELETE":
-            return request.user.groups.filter(name="Admin").exists()
+            return request.user.role == "admin"
 
-        return (
-            request.user.groups.filter(name="Admin").exists() or
-            request.user.groups.filter(name="Accountant").exists()
-        )
+        return request.user.role in ["admin", "accountant"]
 
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
@@ -81,4 +79,9 @@ class IsUser(BasePermission):
             and request.user.is_authenticated
             and request.user.role == "user"
         )
-    
+
+# New
+class IsOwnerOrAdmin(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user.role == 'admin' or obj.user == request.user
+

@@ -1,10 +1,11 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, filters
 from rest_framework.response import Response
 from django.db.models import Sum, F
 from .models import Account, JournalEntry
 from .serializers import AccountSerializer, JournalEntrySerializer
 from .message import get_message
 from custom_permissions.permission import IsAdminOrAccountant
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 # ---- Account Views ----
@@ -29,6 +30,11 @@ class AccountListCreateView(generics.ListCreateAPIView):
 class JournalEntryListCreateView(generics.ListCreateAPIView):
     serializer_class = JournalEntrySerializer
     permission_classes = [IsAdminOrAccountant]
+
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.SearchFilter]
+    filterset_fields = ['account__type','date']
+    search_fields = ['description','account__name']
+    ordering_fields = ['date','credit','debit']
 
     def get_queryset(self):
         return JournalEntry.objects.all()
