@@ -10,7 +10,7 @@ from custom_permissions.permission import *
 from core.utils.export import generate_report_file
 from django.conf import settings
 
-
+# Update
 class ReportListCreateView(generics.ListCreateAPIView):
     serializer_class = ReportSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
@@ -66,7 +66,7 @@ class ReportListCreateView(generics.ListCreateAPIView):
                 status=status.HTTP_201_CREATED,
             )
 
-
+# Update
 class ReportExportView(generics.GenericAPIView):
     serializer_class = ReportSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]

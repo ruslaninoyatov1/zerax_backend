@@ -25,7 +25,7 @@ MESSAGES = {
         "RU": "Не удалось экспортировать отчет.",
         "UZ": "Hisobot eksport qilishda xatolik yuz berdi.",
     },
-
+    # New Messages
     # ---- EXPENSES ----
     "expense_created": {
         "EN": "Expense created successfully.",

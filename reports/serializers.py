@@ -11,7 +11,7 @@ class ReportSerializer(serializers.ModelSerializer):
     def get_file_url(self,obj):
         request = self.context.get('request')
         return request.build_absolute_uri(obj.file.url) if obj.file else None
-
+    # new
     def create(self,validated_data):
         request = self.context.get('request')
         if request and hasattr(request,'user'):

@@ -6,7 +6,7 @@ class Report(models.Model):
         ("excel", "Excel"),
         ("pdf", "PDF"),
     ]
-
+    # New opt
     SOURCE_CHOICES = [
         ('invoices','Invoices'),
         ('expenses','Expenses'),
