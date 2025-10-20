@@ -1,8 +1,7 @@
-
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
@@ -10,9 +9,15 @@ services:
     depends_on:
       - db
       - redis
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=main.settings
 
   db:
     image: postgres:16
+    container_name: postgres
     environment:
       POSTGRES_DB: zerax
       POSTGRES_USER: postgres
@@ -28,19 +33,39 @@ services:
     ports:
       - "6379:6379"
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # RabbitMQ Dashboard
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   celery:
     build: .
     command: celery -A main worker -l info
     depends_on:
       - web
       - redis
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=main.settings
 
   celery-beat:
     build: .
     command: celery -A main beat -l info
     depends_on:
       - redis
+      - rabbitmq
       - web
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=main.settings
 
 volumes:
   pgdata:
