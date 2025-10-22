@@ -1,10 +1,15 @@
+# Base image
 FROM python:3.12-slim
 
+# Workdir
 WORKDIR /app
+
+# Install dependencies
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
-
+# Copy project files
 COPY . .
 
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Default command
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
