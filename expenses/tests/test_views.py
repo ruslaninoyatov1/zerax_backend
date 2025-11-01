@@ -34,6 +34,7 @@ class ExpenseViewSetTest(APITestCase):
             role="admin"
         )
 
+
         # Bitta expense yozuv
         self.expense = Expense.objects.create(
             user=self.user,
@@ -44,7 +45,6 @@ class ExpenseViewSetTest(APITestCase):
         )
 
     def authenticate(self, user):
-        """JWT token yaratib, so‘rovga header sifatida qo‘shadi"""
         refresh = RefreshToken.for_user(user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
@@ -53,7 +53,6 @@ class ExpenseViewSetTest(APITestCase):
     # -------------------------------------------------------
 
     def test_expense_list_authenticated(self):
-        """✅ Auth bo‘lgan foydalanuvchi o‘z xarajatlarini ko‘radi"""
         self.authenticate(self.user)
         url = reverse("expense-list-create")
 
@@ -64,13 +63,11 @@ class ExpenseViewSetTest(APITestCase):
         self.assertEqual(response.data["results"]["results"][0]["note"], "Test Note")
 
     def test_expense_list_unauthenticated(self):
-        """🚫 Authsiz foydalanuvchi 401 xatolik oladi"""
         url = reverse("expense-list-create")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_expense(self):
-        """✅ Yangi xarajat yaratish"""
         self.authenticate(self.user)
         url = reverse("expense-list-create")
 
@@ -87,7 +84,6 @@ class ExpenseViewSetTest(APITestCase):
         self.assertEqual(response.data["expense"]["category"], "salary")
 
     def test_update_expense(self):
-        """✅ Xarajatni yangilash"""
         self.authenticate(self.user)
         url = reverse("expense-detail", kwargs={"pk": self.expense.pk})
 
@@ -104,7 +100,6 @@ class ExpenseViewSetTest(APITestCase):
         self.assertEqual(response.data["expense"]["note"], "Updated Note")
 
     def test_delete_expense(self):
-        """✅ Xarajatni o‘chirish"""
         self.authenticate(self.user)
         url = reverse("expense-detail", kwargs={"pk": self.expense.pk})
 
@@ -114,7 +109,6 @@ class ExpenseViewSetTest(APITestCase):
         self.assertFalse(Expense.objects.filter(pk=self.expense.pk).exists())
 
     def test_user_can_only_see_own_expenses(self):
-        """✅ Har bir user faqat o‘z yozuvlarini ko‘radi"""
         other_user = User.objects.create_user(
             email="other@gmail.com",
             password="rootroot",
@@ -137,3 +131,4 @@ class ExpenseViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]["results"]), 1)
         self.assertEqual(response.data["results"]["results"][0]["user"], self.user.id)
+
