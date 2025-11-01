@@ -19,7 +19,7 @@ class ExpenseModelTest(TestCase):
         self.user = User.objects.create_user(
             email = "test@gamil.com",
             password="rootroot",
-            full_name="Diyorbek",
+            full_name="TestName",
         )
 
     def test_create_expense(self):
