@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .models import Report
 from .serializers import ReportSerializer
 from .message import get_message
@@ -14,7 +14,7 @@ from django.conf import settings
 class ReportListCreateView(generics.ListCreateAPIView):
     serializer_class = ReportSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -99,3 +99,4 @@ class ReportExportView(generics.GenericAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
