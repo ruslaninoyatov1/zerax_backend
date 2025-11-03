@@ -7,7 +7,6 @@ from .message import get_message
 from custom_permissions.permission import IsAdminOrAccountant
 from django_filters.rest_framework import DjangoFilterBackend
 
-
 # ---- Account Views ----
 class AccountListCreateView(generics.ListCreateAPIView):
     serializer_class = AccountSerializer
@@ -16,28 +15,36 @@ class AccountListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Account.objects.all()
 
+    def perform_create(self, serializer):
+        # save user automatically so client doesn't need to send 'user' field
+        serializer.save(user=self.request.user)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        # serializer.data will already contain saved values (id, etc.)
         return Response(
             {"message": get_message("account_created", request.user), "account": serializer.data},
             status=status.HTTP_201_CREATED,
         )
-
 
 # ---- Journal Entry Views ----
 class JournalEntryListCreateView(generics.ListCreateAPIView):
     serializer_class = JournalEntrySerializer
     permission_classes = [IsAdminOrAccountant]
 
-    filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.SearchFilter]
-    filterset_fields = ['account__type','date']
-    search_fields = ['description','account__name']
-    ordering_fields = ['date','credit','debit']
+    # remove duplicate SearchFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['account__type', 'date']
+    search_fields = ['description', 'account__name']
+    ordering_fields = ['date', 'credit', 'debit']
 
     def get_queryset(self):
         return JournalEntry.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -48,8 +55,7 @@ class JournalEntryListCreateView(generics.ListCreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
-# ----  Balance Sheet View  ----
+# ---- Balance Sheet View ----
 class BalanceSheetView(generics.GenericAPIView):
     serializer_class = JournalEntrySerializer
     permission_classes = [IsAdminOrAccountant]

@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.conf import settings
+
 
 class Account(models.Model):
     TYPE_CHOICES = [
@@ -9,14 +11,16 @@ class Account(models.Model):
         ("income","Income"),
         ("expense","Expense"),
     ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=50, unique=True)
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES,default="asset")
 
     def __str__(self):
         return f"{self.code} - {self.name}"
 
 class JournalEntry(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="journal_entries")
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="journal_entries")
     debit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     credit = models.DecimalField(max_digits=12, decimal_places=2, default=0)

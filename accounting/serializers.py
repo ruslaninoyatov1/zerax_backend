@@ -6,6 +6,7 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = "__all__"
+        read_only_fields = ('id','user')
 
 
 class JournalEntrySerializer(serializers.ModelSerializer):
@@ -14,4 +15,4 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = JournalEntry
         fields = "__all__"
-        read_only_fields = ("id", "created_at")
+        read_only_fields = ("id", "created_at",'user')
