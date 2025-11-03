@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import SettingsView, IntegrationCreateView
+from .views import SettingsView, IntegrationListCreateView
 
 urlpatterns = [
     path("settings/", SettingsView.as_view(), name="settings"),
-    path("settings/integrations/", IntegrationCreateView.as_view(), name="integration-create"),
+    path("settings/integrations/", IntegrationListCreateView.as_view(), name="integration-list-create"),
 ]
