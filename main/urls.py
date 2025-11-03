@@ -25,7 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # Auth endpoints
-    path("api/auth/register/", include("users.urls_register")),
+    path("api/v1/auth/registration/", include("users.urls_register")),
     path("api/auth/", include("users.urls_auth")),
     path("api/users/", include("users.urls_me")),
     path("api/", include("users.urls_admin")),  # Fixed: urls_admin
