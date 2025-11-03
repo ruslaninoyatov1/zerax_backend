@@ -61,7 +61,10 @@ class AccountantReadOnly(BasePermission):
 class IsAdmin(BasePermission):
     """Allow access only to admin users."""
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user == "admin"
+        return (
+            request.user and request.user.is_authenticated and
+            getattr(request.user, 'role',None) == 'admin'
+        )
 
 
 class IsUser(BasePermission):
@@ -76,10 +79,13 @@ class IsUser(BasePermission):
 # New
 class IsOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        return (
-            request.user.role in ["admin", "accountant"] or
-            obj.user == request.user
-        )
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        if getattr(request.user, "role", None) in ("admin", "accountant"):
+            return True
+
+        return getattr(obj, "user", None) == request.user
 
 class IsAccountant(permissions.BasePermission):
     """Accountant – hamma narsani ko‘rish va tahrir qilish mumkin, lekin o‘chira olmaydi."""
@@ -96,7 +102,7 @@ class IsOwnerOrAdminOrAccountant(permissions.BasePermission):
     Oddiy user – faqat o‘z invoice’ini CRUD qilishi mumkin.
     """
     def has_object_permission(self, request, view, obj):
-        if request.user.role == ['admin','accountant']:
+        if request.user.role in ['admin','accountant']:
             return True
         return obj.user == request.user
 
