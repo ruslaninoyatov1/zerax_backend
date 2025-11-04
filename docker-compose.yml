@@ -14,14 +14,13 @@ services:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - DJANGO_SETTINGS_MODULE=main.settings
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
   db:
     image: postgres:16
     container_name: postgres
     environment:
-      POSTGRES_DB: zerax
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: zerax_db
+      POSTGRES_USER: zerax_admin
+      POSTGRES_PASSWORD: root
     ports:
       - "5432:5432"
     volumes:
@@ -67,17 +66,7 @@ services:
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - DJANGO_SETTINGS_MODULE=main.settings
-  telegram_bot:
-    build: .
-    command: python users/services/telegram_bot.py
-    depends_on:
-      - redis
-    environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    volumes:
-      - .:/app
+
 
 volumes:
   pgdata:
