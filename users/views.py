@@ -11,8 +11,6 @@ from custom_permissions.permission import *
 from django.contrib.auth import get_user_model
 
 
-
-
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
@@ -62,9 +60,6 @@ class MeView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
-    
-
-
 
 
 User = get_user_model()

@@ -113,7 +113,6 @@ class ExpenseViewSetTest(APITestCase):
             email="other@gmail.com",
             password="rootroot",
             full_name="Another User",
-            telegram_id=1954153232
         )
 
         Expense.objects.create(
